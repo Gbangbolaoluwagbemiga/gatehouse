@@ -2,7 +2,7 @@
 
 - **Project name:** Gatehouse
 - **Track:** Track 01: Best Business Workflow.
-- **Side track: Code with Wispr.** Attach the Wispr Flow Insights scorecard screenshot. Disclosure, keep it: *"The final stage was done by voice with Wispr Flow: my prompts to the coding agent, every test message to the Switch agents in Telegram, the README's 'Why I built this' section and the demo voice-over. The earlier build was typed."*
+- **Side track: Code with Wispr.** Attach the Wispr Flow Insights scorecard screenshot. Disclosure, keep it: *"The final stage was done by voice with Wispr Flow: the README's 'Why I built this' section, my prompts to the coding agent and test messages to the Switch agents in Telegram. The earlier build was typed, and the demo narration is text-to-speech (YarnGPT)."*
 - **Optional side track: Best Blog,** once `docs/BLOG.md` is published.
 - **Repo:** https://github.com/Gbangbolaoluwagbemiga/gatehouse
 - **Demo video:** VIDEO_URL

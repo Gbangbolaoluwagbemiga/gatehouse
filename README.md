@@ -27,7 +27,9 @@ The judge was never the hard part. **The team side was:**
 
 *(Dictated with Wispr Flow.)*
 
-WHY_I_BUILT_THIS
+I built Gatehouse because AI made pull requests free, and maintainers are now buried in plausible-looking slop. Some projects already put an AI in front of the queue, but a judge alone isn't enough. When it isn't sure, the case sits on a web page that nobody watches until the deadline passes, and nobody checks that the verdict is true.
+
+I wanted the team side handled where maintainers already talk: their Telegram group. So Gatehouse gives them two agents on Switch: a desk that routes every doubtful case to whoever is on rota, and an auditor that checks every signature before anyone acts. The AI proposes, but a person always decides, and every decision goes into a ledger that can't be quietly edited. I hope it helps maintainers of big repositories keep order and keep scams out.
 
 ## What Gatehouse does
 
