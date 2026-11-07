@@ -5,7 +5,8 @@
 # Each agent runs in its own folder of this repo (agents/desk, agents/auditor), where its
 # CLAUDE.md gives it its role and the gatehouse CLI.
 #
-# Deploy: Switch Console → Templates → import this file → set `checkout` to your clone.
+# Deploy: ask switch-buddy to run this file (or import it under Templates), with `checkout` = your
+# clone and `where` = your team's room. Then, in that room: @gatehouse-desk triage
 version: 1
 
 params:
@@ -27,12 +28,7 @@ params:
   where:
     type: room
     label: Room
-    description: An existing room (e.g. a Telegram group your bot is in), or New room to create gatehouse-triage.
-    default: [$new]
-  bridge:
-    type: bridge
-    description: The messaging app a new room is created on.
-    default: [Telegram, Slack, Discord, $first]
+    description: The maintainers' room both agents join, e.g. the Telegram group your Switch bot is in.
 
 agents:
   - name: gatehouse-desk
@@ -63,14 +59,3 @@ agents:
       verdict and reply in the same thread with ✓/✗ and the signer. On any ✗ tell people not to act
       on it. Post `bun ../../gatehouse/cli.ts digest` when asked for the digest.
 
-room:
-  name: gatehouse-triage
-  description: Maintainers and two agents triaging bonded pull requests
-  bridge: "{bridge}"
-  agents: [gatehouse-desk, gatehouse-auditor]
-  users: ["{$creator}"]
-
-kickoff: |
-  @gatehouse-desk and @gatehouse-auditor: this is the maintainers' triage room.
-  Desk, say hello in one line, then run the queue and post what is waiting for a person.
-  Auditor, verify each verdict the desk posts, in its thread.
