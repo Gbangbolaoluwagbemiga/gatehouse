@@ -24,10 +24,15 @@ params:
     description: Where both run.
     default: local
     input: advanced
+  where:
+    type: room
+    label: Room
+    description: An existing room (e.g. a Telegram group your bot is in), or New room to create gatehouse-triage.
+    default: [$new]
   bridge:
     type: bridge
-    description: The messaging app the room lives in.
-    default: [Discord, Slack, Telegram, $first]
+    description: The messaging app a new room is created on.
+    default: [Telegram, Slack, Discord, $first]
 
 agents:
   - name: gatehouse-desk
@@ -37,6 +42,7 @@ agents:
     provider: "{provider}"
     location: "{location}"
     directory: "{checkout}/agents/desk"
+    join: ["{where}"]
     instructions: |
       You are gatehouse-desk. Read CLAUDE.md in your working directory first and follow it.
       In short: run `bun ../../gatehouse/cli.ts queue` when asked to triage, post one line per PR,
@@ -50,6 +56,7 @@ agents:
     provider: "{provider}"
     location: "{location}"
     directory: "{checkout}/agents/auditor"
+    join: ["{where}"]
     instructions: |
       You are gatehouse-auditor. Read CLAUDE.md in your working directory first and follow it.
       In short: when the desk or a person asks, run `bun ../../gatehouse/cli.ts verify <id>` for each

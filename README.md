@@ -4,7 +4,7 @@
 
 Built for **Flip the Switch** (WeMakeDevs × Switch), Track 01: Best Business Workflow.
 
-> 🎥 **Demo video:** `VIDEO_URL`, 2–3 minutes in Discord: triage → signature check → a maintainer decides.
+> 🎥 **Demo video:** `VIDEO_URL`, 2–3 minutes in Telegram: triage → signature check → a maintainer decides.
 
 ## The problem
 
@@ -28,7 +28,7 @@ Gatehouse turns the maintainers' existing channel into a **Switch room**. Two ag
 | **Maintainers** | Decide. Refunds and forfeits are signed by the maintainer on the verdict page the desk links. **The agents are read-only: they never hold keys or move money.** |
 
 ```
-Discord #gatehouse-triage ──(Switch room)──┬── maintainers
+Telegram group (Switch room) ──(Switch room)──┬── maintainers
                                            ├── @gatehouse-desk ───┐
                                            └── @gatehouse-auditor ┘── gatehouse CLI (read-only)
                                                                         │
@@ -51,8 +51,8 @@ You need: macOS, Docker running, [Bun](https://bun.sh), and Claude Code or Codex
    bun run gatehouse verify 2ea3fd344e767358    # → ✓ 6/6 checks pass, with the signer
    bun test                                     # → 7 pass
    ```
-2. **Install Switch Console** ([macOS arm64 .dmg](https://github.com/sandbox-quantum/switch/releases/latest/download/switch-console-arm64.dmg)). Open it, and let `switch-buddy` start the local server and connect Discord ([getting started](https://docs.switchagents.ai/switch-rooms/getting-started)).
-3. **Deploy the room:** in Switch Console, import [`switch/gatehouse.template.yaml`](switch/gatehouse.template.yaml) and set **Gatehouse checkout** to your clone's folder. → `#gatehouse-triage` appears with both agents and you in it. The desk says hello and posts the queue.
+2. **Install Switch Console** ([macOS arm64 .dmg](https://github.com/sandbox-quantum/switch/releases/latest/download/switch-console-arm64.dmg)). Open it, and let `switch-buddy` start the local server and connect Telegram ([getting started](https://docs.switchagents.ai/switch-rooms/getting-started)).
+3. **Deploy the room:** in Switch Console, import [`switch/gatehouse.template.yaml`](switch/gatehouse.template.yaml) and set **Gatehouse checkout** to your clone's folder and pick your Telegram group (or New room on Slack/Mattermost). → the room appears with both agents and you in it. The desk says hello and posts the queue.
 4. **Use it:**
    - `@gatehouse-desk triage` → the queue, one line per PR, with deadlines. The auditor answers in the thread with ✓ per verdict.
    - `@gatehouse-desk why was demo-widget#5 forfeited?` → the reasons, evidence and link.

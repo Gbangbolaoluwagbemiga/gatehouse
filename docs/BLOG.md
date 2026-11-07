@@ -37,7 +37,7 @@ Neither agent can move money. When a maintainer decides, the desk hands them the
 
 ## What I'd tell a first-time Switch user
 
-1. **Start with Switch Console and switch-buddy.** It sets up the local server and the Discord connection for you.
+1. **Start with Switch Console and switch-buddy.** It sets up the local server and the Telegram connection for you.
 2. **Keep each agent's tools in its own folder.** The `directory` field is your permission boundary.
 3. **Use `addressing`.** `anyone` for the front desk, `owner-agents` for the checker, so strangers can't steer it.
 4. **Make tools print chat-sized text.** Agents relay what they get; a 2-line tool output becomes a 2-line message.

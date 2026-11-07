@@ -108,7 +108,7 @@ All four criteria count; their weights aren't published.
    1. One-line pitch, then the problem: AI-generated PRs flood maintainers.
    2. The demo video.
    3. "How Switch is used", with a diagram: Discord channel → Switch room → two agents plus maintainers → the gatehouse CLI (live verdict API + offline signature checks).
-   4. **Run it in 10 minutes**, as "do X → see Y" steps: install Switch Console, connect Discord, deploy the template, type `@gatehouse-desk triage`.
+   4. **Run it in 10 minutes**, as "do X → see Y" steps: install Switch Console, connect Telegram, deploy the template, type `@gatehouse-desk triage`.
    5. What was built today vs. what pre-existed.
    6. Limits.
    7. License.

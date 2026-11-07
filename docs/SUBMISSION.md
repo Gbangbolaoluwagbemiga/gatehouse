@@ -4,7 +4,7 @@
 - **Track:** Track 01: Best Business Workflow. Optionally also the Best Blog side track, once `docs/BLOG.md` is published.
 - **Repo:** https://github.com/Gbangbolaoluwagbemiga/gatehouse
 - **Demo video:** VIDEO_URL
-- **One-liner:** A PR triage room for open-source maintainers: two Switch agents triage AI-judged pull requests and verify every verdict's signature in Discord, and the maintainers make the calls.
+- **One-liner:** A PR triage room for open-source maintainers: two Switch agents triage AI-judged pull requests and verify every verdict's signature in Telegram, and the maintainers make the calls.
 
 **Description:**
 
