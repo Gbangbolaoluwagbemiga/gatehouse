@@ -8,7 +8,7 @@
 
 Built for **Flip the Switch** (WeMakeDevs × Switch), Track 01: Best Business Workflow.
 
-> 🎥 **Demo video:** https://youtu.be/HaGLocd7g-Y (3½ minutes, recorded live in Telegram: rota → triage → signature audit → a maintainer decides → a contributor disputes → team report).
+> 🎥 **Demo video:** https://youtu.be/uioe7InEN9Q (2:51, recorded live in Telegram: rota → triage → signature audit → a maintainer decides → a contributor disputes).
 
 ## The problem
 
