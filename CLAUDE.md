@@ -2,7 +2,6 @@
 
 **Gatehouse is an open-source maintainer team's PR triage room, run by people and AI agents together inside Discord via Switch.**
 It reads PatchBond's public verdict API. PatchBond is the author's earlier MIT project: a stranger's PR carries a refundable bond, and a model in a TEE signs a verdict. Only `shared/` (verdict types and signature checks) is reused code; everything else here was written on Nov 7.
-**Positioning:** this is an AI-agents-and-teams-in-chat project. Don't lead with crypto or chains anywhere (README, video, blog, submission). Mention PatchBond only as the disclosed source of the verdicts.
 Gatehouse puts that system into the team's chat. Agents post each bonded PR with its signed verdict and verify the signature in the room.
 They route every `needs_human` case to a named maintainer with the 48 h deadline. People decide in the thread.
 
