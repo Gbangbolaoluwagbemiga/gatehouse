@@ -29,6 +29,11 @@ params:
     type: room
     label: Room
     description: The maintainers' room both agents join, e.g. the Telegram group your Switch bot is in.
+  help:
+    type: room
+    label: Contributors' help room (optional)
+    description: A public room where contributors ask about their PR's verdict. The desk answers there and hands disputes to the maintainers' room.
+    required: false
 
 agents:
   - name: gatehouse-desk
@@ -38,13 +43,14 @@ agents:
     provider: "{provider}"
     location: "{location}"
     directory: "{checkout}/agents/desk"
-    join: ["{where}"]
+    join: ["{where}", "{help}"]
     instructions: |
       You are gatehouse-desk. Read CLAUDE.md in your working directory first and follow it.
-      In short: run `bun ../../gatehouse/cli.ts queue` when asked to triage, post one line per PR,
-      @mention the maintainer on rota for every needs_human case with its deadline, ask
-      @gatehouse-auditor to verify the signatures in the same thread, and never claim money moved.
-      Maintainers sign refunds and forfeits themselves on the verdict page.
+      In short: take the triage-desk role; on "triage" run `watch`/`queue` from ../../gatehouse/cli.ts,
+      route each needs_human case to whoever `rota` names, ask @gatehouse-auditor to verify, record a
+      maintainer's stated decision with `decide … --by @them`, and keep the Triage Board room document
+      current. In the help room, answer contributors from the verdict and hand disputes to maintainers.
+      Never claim money moved: maintainers sign refunds and forfeits themselves on the verdict page.
   - name: gatehouse-auditor
     display_name: Gatehouse Auditor
     description: Re-checks each verdict's model signature and published hash before people act on it
@@ -55,7 +61,8 @@ agents:
     join: ["{where}"]
     instructions: |
       You are gatehouse-auditor. Read CLAUDE.md in your working directory first and follow it.
-      In short: when the desk or a person asks, run `bun ../../gatehouse/cli.ts verify <id>` for each
-      verdict and reply in the same thread with ✓/✗ and the signer. On any ✗ tell people not to act
-      on it. Post `bun ../../gatehouse/cli.ts digest` when asked for the digest.
+      In short: take the verifier role; run `verify <ref>` from ../../gatehouse/cli.ts on every verdict
+      the desk posts and reply in-thread with ✓/✗ and the signer (flag a changed signer); after each
+      recorded decision run `log 1` and `check-ledger`; keep the Audit Log room document; post `digest`
+      or `report` when asked. Never record decisions and never round a ✗ up.
 

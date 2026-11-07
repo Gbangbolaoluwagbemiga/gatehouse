@@ -1,0 +1,15 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun test
+      - name: Template parses
+        run: python3 -c "import yaml; d=yaml.safe_load(open('switch/gatehouse.template.yaml')); assert {a['name'] for a in d['agents']} == {'gatehouse-desk','gatehouse-auditor'}"
+      - name: Live smoke test (read-only)
+        continue-on-error: true
+        run: bun gatehouse/cli.ts stats && bun gatehouse/cli.ts verify 2ea3fd344e767358
