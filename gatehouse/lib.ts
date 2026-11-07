@@ -101,7 +101,7 @@ export async function verify(api: Api, id: string) {
 export async function stats(api: Api) {
   const s = await api.stats();
   const by = Object.entries(s.verdicts).map(([k, n]) => `${k} ${n}`).join(", ");
-  return `${s.verdicts_live} verdicts (${by}); median ${s.median_minutes_to_verdict.toFixed(1)} min to verdict; $${s.cost_per_verdict_usd.toFixed(4)} per verdict; ${s.disputes} disputes. Judge ${s.judge}, contract ${s.contract} on ${s.network}.`;
+  return `${s.verdicts_live} verdicts (${by}); median ${s.median_minutes_to_verdict.toFixed(1)} min to verdict; $${s.cost_per_verdict_usd.toFixed(4)} per verdict; ${s.disputes} disputes. Judge model ${s.judge}.`;
 }
 
 export async function digest(api: Api, now = Date.now()) {
