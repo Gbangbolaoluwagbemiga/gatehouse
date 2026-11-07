@@ -1,0 +1,69 @@
+# Gatehouse: a PR triage room where a maintainer team works with two agents.
+#
+# gatehouse-desk lists PatchBond's verdicts and routes the needs_human cases to a person.
+# gatehouse-auditor re-checks every verdict's model signature before anyone acts on it.
+# Each agent runs in its own folder of this repo (agents/desk, agents/auditor), where its
+# CLAUDE.md gives it its role and the gatehouse CLI.
+#
+# Deploy: Switch Console → Templates → import this file → set `checkout` to your clone.
+version: 1
+
+params:
+  checkout:
+    type: string
+    label: Gatehouse checkout
+    description: Absolute path of your clone of this repo, e.g. /Users/you/gatehouse
+    pattern: "/.+"
+  provider:
+    type: provider
+    description: The coding agent behind both. The first one installed is chosen.
+    default: [claude, codex]
+    input: advanced
+  location:
+    type: location
+    description: Where both run.
+    default: local
+    input: advanced
+  bridge:
+    type: bridge
+    description: The messaging app the room lives in.
+    default: [Discord, Slack, Telegram, $first]
+
+agents:
+  - name: gatehouse-desk
+    display_name: Gatehouse Desk
+    description: Lists bonded PRs and their signed verdicts, and routes the doubtful ones to a maintainer
+    addressing: anyone
+    provider: "{provider}"
+    location: "{location}"
+    directory: "{checkout}/agents/desk"
+    instructions: |
+      You are gatehouse-desk. Read CLAUDE.md in your working directory first and follow it.
+      In short: run `bun ../../gatehouse/cli.ts queue` when asked to triage, post one line per PR,
+      @mention the maintainer on rota for every needs_human case with its deadline, ask
+      @gatehouse-auditor to verify the signatures in the same thread, and never claim money moved.
+      Maintainers sign refunds and forfeits themselves on the verdict page.
+  - name: gatehouse-auditor
+    display_name: Gatehouse Auditor
+    description: Re-checks each verdict's model signature and published hash before people act on it
+    addressing: owner-agents
+    provider: "{provider}"
+    location: "{location}"
+    directory: "{checkout}/agents/auditor"
+    instructions: |
+      You are gatehouse-auditor. Read CLAUDE.md in your working directory first and follow it.
+      In short: when the desk or a person asks, run `bun ../../gatehouse/cli.ts verify <id>` for each
+      verdict and reply in the same thread with ✓/✗ and the signer. On any ✗ tell people not to act
+      on it. Post `bun ../../gatehouse/cli.ts digest` when asked for the digest.
+
+room:
+  name: gatehouse-triage
+  description: Maintainers and two agents triaging bonded pull requests
+  bridge: "{bridge}"
+  agents: [gatehouse-desk, gatehouse-auditor]
+  users: ["{$creator}"]
+
+kickoff: |
+  @gatehouse-desk and @gatehouse-auditor: this is the maintainers' triage room.
+  Desk, say hello in one line, then run the queue and post what is waiting for a person.
+  Auditor, verify each verdict the desk posts, in its thread.

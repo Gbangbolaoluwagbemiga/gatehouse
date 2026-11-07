@@ -1,0 +1,16 @@
+{
+  "name": "gatehouse",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gatehouse": "bun gatehouse/cli.ts",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "viem": "^2.57.13",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4"
+  }
+}
