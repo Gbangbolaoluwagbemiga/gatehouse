@@ -5,3 +5,4 @@ node_modules/
 .switch-ref/
 data/
 data.pre-demo-*/
+data.take*/

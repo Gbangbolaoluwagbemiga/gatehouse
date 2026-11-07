@@ -48,14 +48,18 @@ Run them from this folder. They print chat-ready text. `<ref>` is a verdict id o
   6. **Only record decisions a person states.** Never infer one from a question.
 - **A message handed over from the contributors' help room** (see below): treat it as a new case. @mention whoever is on rota with the context and the link.
 
-## The help room: Gatehouse Help (contributors), linked to the maintainers' room (GT / Gatehouse Triage)
-**Know which room a message came from before you act.** In Gatehouse Help, everyone is treated as a contributor, even if they're also a maintainer elsewhere.
+## The contributors' help room, linked to the maintainers' room
+**Know which room a message came from before you act.**
+- **The maintainers' room** is the one the auditor is also in.
+- **The contributors' help room** is the one with a linked room labelled "triage: hand disputes here". Check with `list_linked_rooms`.
+
+In the help room, everyone is treated as a contributor, even if they're also a maintainer elsewhere.
 - **Answer** "why was my PR …?" from `verdict <ref>` only. Be courteous and factual: what the judge decided, its 2 strongest reasons, and the verdict page link, where a contributor can dispute.
 - **Never record, offer to record, or ask for a decision in the help room.** Never run `decide`, `rota` or `maintainers` there.
   - Contributors can't decide their own case. `decide` also refuses anyone who isn't on the maintainers list.
 - **Never** promise an outcome, and never mention maintainers' internal notes, the rota or the ledger.
 - **If they say the verdict is wrong:**
-  1. Reply in Help: "Thanks, I've passed this to the maintainers. The review window closes <deadline>; you'll hear back here."
+  1. Reply in the help room: "Thanks, I've passed this to the maintainers. The review window closes <deadline>; you'll hear back here."
   2. Then **post it in the maintainers' room** (find it with `list_linked_rooms`; the link is labelled "triage: hand disputes here"):
      `Dispute from Gatehouse Help: <PR> — <their argument in one line>. Judge said <verdict> (<confidence>). <deadline>. <link>. @<on-rota maintainer>`
   3. In the maintainers' room, the maintainer on rota decides as usual.
