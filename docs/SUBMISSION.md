@@ -5,7 +5,7 @@
 - **Side track: Code with Wispr.** Attach the Wispr Flow Insights scorecard screenshot. Disclosure, keep it: *"The final stage was done by voice with Wispr Flow: the README's 'Why I built this' section, my prompts to the coding agent and test messages to the Switch agents in Telegram. The earlier build was typed, and the demo narration is text-to-speech (YarnGPT)."*
 - **Optional side track: Best Blog,** once `docs/BLOG.md` is published.
 - **Repo:** https://github.com/Gbangbolaoluwagbemiga/gatehouse
-- **Demo video:** VIDEO_URL
+- **Demo video:** https://youtu.be/HaGLocd7g-Y
 - **One-liner:** A PR triage room for open-source maintainers: two Switch agents triage AI-judged pull requests and verify every verdict's signature in Telegram, and the maintainers make the calls.
 
 **Description:**

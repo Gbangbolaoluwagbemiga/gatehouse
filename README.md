@@ -8,7 +8,7 @@
 
 Built for **Flip the Switch** (WeMakeDevs × Switch), Track 01: Best Business Workflow.
 
-> 🎥 **Demo video:** `VIDEO_URL`, 2–3 minutes in Telegram: triage → signature check → a maintainer decides → the decision is on the record.
+> 🎥 **Demo video:** https://youtu.be/HaGLocd7g-Y (3½ minutes, recorded live in Telegram: rota → triage → signature audit → a maintainer decides → a contributor disputes → team report).
 
 ## The problem
 
