@@ -23,6 +23,12 @@ The judge was never the hard part. **The team side was:**
 3. **There was no record of who decided what, or when.** For money that's taken from a stranger, that's not acceptable.
 4. **Contributors had nobody to ask** why their PR was forfeited.
 
+## Why I built this
+
+*(Dictated with Wispr Flow.)*
+
+WHY_I_BUILT_THIS
+
 ## What Gatehouse does
 
 Gatehouse turns the maintainers' existing channel into a **Switch room**, with two agents working alongside the maintainers.

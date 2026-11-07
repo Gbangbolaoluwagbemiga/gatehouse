@@ -1,7 +1,9 @@
 # Submission text (paste into https://wemakedevs.org/hackathons/switch/submit; the entrant submits personally)
 
 - **Project name:** Gatehouse
-- **Track:** Track 01: Best Business Workflow. Optionally also the Best Blog side track, once `docs/BLOG.md` is published.
+- **Track:** Track 01: Best Business Workflow.
+- **Side track: Code with Wispr.** Attach the Wispr Flow Insights scorecard screenshot. Disclosure, keep it: *"The final stage was done by voice with Wispr Flow: my prompts to the coding agent, every test message to the Switch agents in Telegram, the README's 'Why I built this' section and the demo voice-over. The earlier build was typed."*
+- **Optional side track: Best Blog,** once `docs/BLOG.md` is published.
 - **Repo:** https://github.com/Gbangbolaoluwagbemiga/gatehouse
 - **Demo video:** VIDEO_URL
 - **One-liner:** A PR triage room for open-source maintainers: two Switch agents triage AI-judged pull requests and verify every verdict's signature in Telegram, and the maintainers make the calls.
