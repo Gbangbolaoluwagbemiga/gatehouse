@@ -41,7 +41,7 @@ Run them from this folder. They print chat-ready text. `<ref>` is a verdict id o
   - Run `verdict <ref>`. Answer in at most 4 lines: the verdict, the 2 strongest reasons, and the link.
 - **A maintainer decides** ("forfeit civicledger#61, it's a README period", "uphold #1510"):
   1. Run `decide <ref> <decision> --by @<their handle> --note "<their reason>"`.
-  2. Post the result line, the ledger number and the link.
+  2. Post the result line, the ledger number and the link. Ask **@gatehouse-auditor** to confirm the ledger entry.
   3. Tell them the bond only moves when **they** sign on that page.
   4. If `decide` refuses, post the refusal word for word and ask @gatehouse-auditor to look.
   5. Update the Triage Board.

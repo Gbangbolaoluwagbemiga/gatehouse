@@ -1,10 +1,14 @@
 # Gatehouse
 
-**A pull-request triage room for open-source maintainers, run inside the team's own chat. Two AI agents triage every flagged PR and check that each AI verdict is genuine. The maintainers make the calls.**
+[![ci](https://github.com/Gbangbolaoluwagbemiga/gatehouse/actions/workflows/ci.yml/badge.svg)](https://github.com/Gbangbolaoluwagbemiga/gatehouse/actions/workflows/ci.yml)
+
+**A pull-request triage room for open-source maintainers, run inside the team's own chat.**
+- An AI judge has already ruled on every flagged PR.
+- Two agents in the room route the doubtful cases to the maintainer on rota, prove each verdict is genuine before anyone acts, and keep a tamper-evident record of what the humans decided.
 
 Built for **Flip the Switch** (WeMakeDevs × Switch), Track 01: Best Business Workflow.
 
-> 🎥 **Demo video:** `VIDEO_URL`, 2–3 minutes in Telegram: triage → signature check → a maintainer decides.
+> 🎥 **Demo video:** `VIDEO_URL`, 2–3 minutes in Telegram: triage → signature check → a maintainer decides → the decision is on the record.
 
 ## The problem
 
@@ -13,73 +17,126 @@ AI made sending a pull request free, so maintainers drown in plausible-looking s
 - **`forfeit`:** clear slop loses its bond.
 - **`needs_human`:** everything doubtful goes to a person.
 
-The judge was never the hard part. The **team side** was:
-- **The doubtful cases sat on a web page nobody on the team watched,** while their review window ran out.
-- **Nobody could tell at a glance whether a verdict was genuinely signed by the model,** or just text on a page.
+The judge was never the hard part. **The team side was:**
+1. **Nobody watched the doubtful cases.** They sat on a web page while their 72-hour review window ran out, and then refunded themselves by default.
+2. **Nobody could tell whether a verdict was genuine.** Was it really signed by the model, or just text on a page?
+3. **There was no record of who decided what, or when.** For money that's taken from a stranger, that's not acceptable.
+4. **Contributors had nobody to ask** why their PR was forfeited.
 
 ## What Gatehouse does
 
-Gatehouse turns the maintainers' existing channel into a **Switch room**. Two agents work alongside the maintainers there:
+Gatehouse turns the maintainers' existing channel into a **Switch room**, with two agents working alongside the maintainers.
 
-| Who | Does |
+| Who | Job | How |
+|---|---|---|
+| **@gatehouse-desk**, holds the `triage-desk` role, anyone can ask | Runs the queue | <ul><li>`triage` → what's new and what's due, each `needs_human` case @mentioning **whoever is on rota**, with its UTC deadline</li><li>Explains any verdict</li><li>Records a maintainer's stated decision in the ledger</li><li>Keeps the **Triage Board** room document current</li><li>In the contributors' **help room**, answers "why was my PR forfeited?" and hands disputes to the maintainers</li></ul> |
+| **@gatehouse-auditor**, holds the `verifier` role, answers only the desk and its owner | Trusts nothing the desk says | <ul><li>Re-runs **six signature checks** offline on every verdict the desk posts: request and response bytes against the signed hashes, model name, recovered signer, verdict inside the signed response, published hash</li><li>Flags a **changed signer**</li><li>After each decision, re-walks the **ledger's hash chain**</li><li>Keeps the **Audit Log** room document, and posts the daily digest</li></ul> |
+| **Maintainers** | Decide | <ul><li>Say "forfeit civicledger#61, it's a README period" in the room, and the desk records it</li><li>The bond only moves when **they** sign on the verdict page. **The agents hold no keys and move no money.**</li></ul> |
+
+### The two-key rule
+
+The AI judge proposes. A named person decides. **And the decision is refused unless the verdict's signature checks all pass at that moment.**
+
+`gatehouse decide` re-verifies before it writes anything, then appends to `data/ledger.jsonl`. Each entry's SHA-256 covers its content and the previous entry's hash, so editing or deleting any past decision breaks the chain at that line. Both of those are tested.
+
+```
+Telegram: "Gatehouse Help" ──(Switch room)── contributors ── @gatehouse-desk ─┐ hand-off of disputes
+                                                                              ▼
+Telegram: "Gatehouse Triage" ──(Switch room)──┬── maintainers (one on rota)
+                                              ├── @gatehouse-desk    [role: triage-desk] ──┐
+                                              ├── @gatehouse-auditor [role: verifier]   ───┤── gatehouse CLI
+                                              ├── room doc: Triage Board (desk)             │   queue · watch · verdict
+                                              └── room doc: Audit Log (auditor)             │   verify · decide · rota
+                                                                                            │   report · log · check-ledger
+                         live verdict API (read-only) ◄─────────────────────────────────────┤
+                         data/ledger.jsonl (hash-chained) · data/rota.json ◄────────────────┘
+```
+
+More detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Real run: [docs/TRANSCRIPT.md](docs/TRANSCRIPT.md).
+
+## Switch features used
+
+| Switch feature | What Gatehouse does with it |
 |---|---|
-| **@gatehouse-desk** (anyone can ask) | `triage`: lists every PR's latest verdict, posts the `needs_human` cases with their **UTC deadline**, and @mentions the maintainer on rota. Explains any verdict (reasons, evidence, CI) on request. |
-| **@gatehouse-auditor** (desk and owner) | Re-checks **every verdict the desk posts, independently**, in the same thread. It checks the request and response bytes against the hashes the model signed, the model name, the recovered signer, the verdict inside the signed response, and the published verdict hash. It posts ✓ 6/6 or names the failed check, and posts a daily digest. |
-| **Maintainers** | Decide. Refunds and forfeits are signed by the maintainer on the verdict page the desk links. **The agents are read-only: they never hold keys or move money.** |
+| **Rooms on a messaging bridge** | The maintainers' Telegram group *is* the workspace. Nobody opens a dashboard. |
+| **Templates** | [`switch/gatehouse.template.yaml`](switch/gatehouse.template.yaml) creates both agents and their rooms in one run. Params: checkout, maintainers' room, optional help room. |
+| **Agents with their own working directory** | Each agent's folder ([`agents/desk`](agents/desk), [`agents/auditor`](agents/auditor)) holds its brief, so it gets exactly its tools and rules. |
+| **Addressing** | `anyone` for the desk. `owner-agents` for the auditor, so a stranger can't steer the checker. |
+| **Agent-to-agent hand-off in a thread** | The desk asks the auditor, and the auditor answers in the same thread, in front of the humans. |
+| **Roles** | `triage-desk` and `verifier`: people address the job, not a specific agent (`!roles` shows the holders). |
+| **Room documents** | **Triage Board** (current state, rewritten by the desk) and **Audit Log** (append-only, by the auditor), read by anyone joining. |
+| **Multiple rooms** | The contributors' help room plus the maintainers' room, with disputes handed from one to the other. |
+| **Scheduled prompts** | A Telegram scheduled message, `@gatehouse-desk morning`, wakes the desk daily. Switch reads it like a typed message. |
 
-```
-Telegram group (Switch room) ──(Switch room)──┬── maintainers
-                                           ├── @gatehouse-desk ───┐
-                                           └── @gatehouse-auditor ┘── gatehouse CLI (read-only)
-                                                                        │
-                                              live verdict API + offline signature checks
-```
-
-**Why Switch is central:**
-- The whole workflow is a conversation between people and two agents, in the place the team already works. Without Switch, the desk has nobody to route to, and the auditor has nothing to check in front of the people deciding.
-- Switch gives each agent its own identity and role, and its own permission to answer: anyone can address the desk, while the auditor answers only the desk and its owner.
-- It gives the threads shared context, and the same setup works on Discord, Slack, Teams or Telegram without code changes.
-
-## Run it in 10 minutes
+## Run it in 15 minutes
 
 You need: macOS, Docker running, [Bun](https://bun.sh), and Claude Code or Codex signed in.
 
-1. **Clone and check the tools**, which are read-only and need no key:
+1. **Clone and check the tools.** No key needed.
    ```bash
    git clone https://github.com/Gbangbolaoluwagbemiga/gatehouse && cd gatehouse && bun install
-   bun run gatehouse queue                      # → the live triage queue, with deadlines and links
-   bun run gatehouse verify 2ea3fd344e767358    # → ✓ 6/6 checks pass, with the signer
-   bun test                                     # → 7 pass
+   bun test                                     # → 15 pass (two-key rule, tampered ledger, watch, rota…)
+   bun run gatehouse queue                      # → the live triage queue, with deadlines
+   bun run gatehouse verify civicledger#61      # → ✓ 6/6 checks pass, with the signer
    ```
-2. **Install Switch Console** ([macOS arm64 .dmg](https://github.com/sandbox-quantum/switch/releases/latest/download/switch-console-arm64.dmg)). Open it, and let `switch-buddy` start the local server and connect Telegram ([getting started](https://docs.switchagents.ai/switch-rooms/getting-started)).
-3. **Deploy the agents into your room:** connect your team's chat app (Telegram: add your Switch bot to the group). Then ask `switch-buddy` to run [`switch/gatehouse.template.yaml`](switch/gatehouse.template.yaml) with **checkout** = your clone's folder and **where** = that room, or import it under Templates. → Gatehouse Desk and Gatehouse Auditor join the room.
-4. **Use it:**
-   - `@gatehouse-desk triage` → the queue, one line per PR, with deadlines. The auditor answers in the thread with ✓ per verdict.
-   - `@gatehouse-desk why was demo-widget#5 forfeited?` → the reasons, evidence and link.
-   - `@gatehouse-auditor digest` → the day's numbers: verdicts, cost per verdict, time to verdict, disputes.
+2. **Install Switch Console** ([macOS arm64 .dmg](https://github.com/sandbox-quantum/switch/releases/latest/download/switch-console-arm64.dmg)). Let `switch-buddy` start the local server and connect Telegram: create a bot with @BotFather, paste the token into Console, and add the bot to a group called **Gatehouse Triage**. Optionally add it to a second group, **Gatehouse Help**.
+3. **Deploy:** ask `switch-buddy` to run [`switch/gatehouse.template.yaml`](switch/gatehouse.template.yaml) with **checkout** = your clone, **where** = Gatehouse Triage and **help** = Gatehouse Help. → Gatehouse Desk and Gatehouse Auditor join.
+4. **Use it.** In *Gatehouse Triage*:
 
-Each agent runs in its own folder, [`agents/desk`](agents/desk) and [`agents/auditor`](agents/auditor). Its `CLAUDE.md` is its standing brief and limits what it may do.
+   | Send | Get |
+   |---|---|
+   | `@gatehouse-desk I'm on rota` | Rota set, Triage Board updated |
+   | `@gatehouse-desk triage` | What's new and what's due, each case @mentioning you; the auditor replies in-thread with ✓ 6/6 per verdict and flags a changed signer |
+   | `@gatehouse-desk why was demo-widget#5 forfeited?` | The reasons, evidence and link |
+   | `@gatehouse-desk forfeit civicledger#60, the diff is empty` | Ledger entry #N, after a fresh 6/6 check; the auditor confirms `chain intact ✓` |
+   | `@gatehouse-auditor report` | Decisions, time to decision, cases left to time out, ledger integrity |
+
+   In *Gatehouse Help*, as a contributor: `@gatehouse-desk why was my PR civicledger#61 forfeited? I think it's wrong` → a factual answer there, and the dispute handed to the maintainers' room.
+
+   **Optional:** schedule a daily Telegram message, `@gatehouse-desk morning`.
+
+## The CLI the agents use
+
+`bun gatehouse/cli.ts <command>`. `<ref>` is a verdict id or a PR like `civicledger#61`.
+
+| Command | Does |
+|---|---|
+| `queue` | Each PR's latest verdict; `needs_human` cases with deadline or recorded decision; who's on rota |
+| `watch [--peek]` | Only verdicts new since the last watch, plus open cases due within 24 h |
+| `verdict <ref>` / `verify <ref>` | Explain a verdict / re-run its six signature checks offline |
+| `decide <ref> <refund\|forfeit\|uphold> --by @x [--note …]` | Two-key: refuses on any ✗, an unnamed decider, or a second decision without an `override` note |
+| `rota [@x]` | Who's on rota, or hand over, keeping history |
+| `report` / `log [n]` / `check-ledger` | The team's numbers / recent decisions / walk the hash chain |
+| `stats` / `digest` | The judge's numbers / everything together |
+
+Reads are against PatchBond's public API. The only writes are the team's own records in `data/`, which is git-ignored and can be moved with `GATEHOUSE_DATA`.
 
 ## Repo map
 
 | Path | What |
 |---|---|
-| [`switch/gatehouse.template.yaml`](switch/gatehouse.template.yaml) | One Switch template: the room plus both agents |
-| [`agents/`](agents) | Each agent's role, rules and tools |
-| [`gatehouse/`](gatehouse) | Chat-sized CLI (`queue`, `verdict`, `verify`, `stats`, `digest`) and tests |
-| [`shared/`](shared) | The verdict types and signature checks, reused from PatchBond |
-| [`docs/`](docs) | Video shot list, blog post, submission text |
+| [`switch/`](switch) | The Switch template |
+| [`agents/`](agents) | Each agent's brief: role, tools, rules, room documents, hand-off |
+| [`gatehouse/`](gatehouse) | The CLI, the ledger, and 15 tests with recorded fixtures |
+| [`shared/`](shared) | Verdict types and signature checks, reused from PatchBond |
+| [`docs/`](docs) | Architecture, transcript, video plan, blog, submission text |
 
 ## Built for this hackathon vs. reused
 
-- **Written during Flip the Switch (Nov 7, 2026):** the Switch template, both agents, the `gatehouse` CLI and its tests, and these docs.
-- **Reused:** `shared/` (verdict types and signature checks) from PatchBond, my earlier MIT project, plus PatchBond's public verdict API, which the CLI reads.
+- **Written during Flip the Switch (Nov 7, 2026):**
+  - the Switch template and both agents
+  - the `gatehouse` CLI, including the two-key ledger, rota, watch and report, plus its tests and CI
+  - these docs
+- **Reused:**
+  - `shared/` (verdict types and signature checks) from PatchBond, my earlier MIT project
+  - PatchBond's public verdict API, which the CLI reads
 
 ## Limits (honest)
 
-- **The live verdicts are real but few, and mostly from my own test repos.** No outside maintainer team has used Gatehouse yet.
-- **The judge sends many cases to a person,** by design. Gatehouse exists to make that human step fast, not to hide it.
-- **The agents are read-only.** Decisions still need a maintainer's click and signature on the verdict page.
+- **The verdicts are real but few, and mostly from my own test repos.** No outside maintainer team has used Gatehouse yet.
+- **The ledger is tamper-evident, not tamper-proof.** Someone with file access can rewrite the whole chain, but they can't quietly edit one line. Anchoring the head hash somewhere public is the next step.
+- **Roles, room documents and hand-offs are done by the agents through Switch's tools.** They follow their briefs, so a model can still get one wrong. The CLI enforces the rules that matter: verification before a decision, a named decider, no silent second decision.
+- **Decisions are recorded here, but money moves only by the maintainer's own signature** on the verdict page.
 
 ## License
 

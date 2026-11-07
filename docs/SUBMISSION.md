@@ -8,14 +8,39 @@
 
 **Description:**
 
-AI made pull requests free, and maintainers drown in plausible slop. PatchBond bonds each stranger's PR, and an AI judge in a TEE signs a verdict: refund, forfeit or needs_human. But the doubtful cases sat on a web page nobody on the team watched.
+AI made pull requests free, so maintainers drown in plausible slop. Projects are putting AI judges in front of their queues. PatchBond, my earlier project, bonds each stranger's PR, and a model in a TEE signs a verdict: refund, forfeit or needs_human. The judge was never the hard part. The team side was:
+- the doubtful cases sat on a web page nobody watched until their review window ran out
+- nobody could tell a genuine verdict from text on a page
+- there was no record of who decided what, for money taken from a stranger
 
-Gatehouse puts that workflow into the team's chat with Switch. One template creates the room and two agents.
+Gatehouse turns the maintainers' Telegram group into a Switch room. One template deploys two agents.
 
-- **@gatehouse-desk** posts the triage queue. It routes each needs_human case to the maintainer on rota with its UTC deadline, and explains any verdict on request.
-- **@gatehouse-auditor** independently re-checks every verdict the desk posts: the signed request and response hashes, the model, the recovered signer, the verdict inside the signed response, and the published verdict hash. It replies ✓ 6/6 in the thread before anyone acts.
-- **Maintainers decide.** The agents are read-only and never hold keys, so refunds and forfeits are signed by the maintainer on the verdict page.
+- **@gatehouse-desk** (role: triage-desk):
+  - shows what's new and what's due, and @mentions whoever is on rota with each case's deadline
+  - explains any verdict
+  - records a maintainer's stated decision
+  - keeps a Triage Board room document
+  - answers contributors in a separate help room, and hands disputes to the maintainers
+- **@gatehouse-auditor** (role: verifier; only the desk and its owner can address it):
+  - independently re-runs six signature checks on every verdict, in the same thread, and flags a changed signing key
+  - after each decision, re-walks the ledger's hash chain
+  - keeps an Audit Log room document
+- **The two-key rule:** the AI proposes, a named person decides, and `gatehouse decide` refuses unless every signature check passes at that moment. Decisions go into a hash-chained ledger, so editing or dropping any past entry is detected (tested). The agents hold no keys: the bond moves only when the maintainer signs.
 
-Switch is the workflow itself. It gives each agent an identity, a role and permission to answer, plus shared threads with the humans, on Discord, Slack, Teams or Telegram, with no code changes.
+Switch is the workflow itself. It provides:
+- the rooms on Telegram
+- agents with their own folders and briefs
+- addressing rules
+- roles
+- room documents
+- the cross-room hand-off
+- scheduled wake-ups
 
-**What was built for this hackathon:** the Switch template, both agents' roles and tool wiring, and the chat-sized CLI (`queue`, `verdict`, `verify`, `stats`, `digest`) with tests. Reused and disclosed in the README: `shared/` (verdict types and signature checks) and the public verdict API of PatchBond, my earlier MIT project.
+The same setup runs on Slack, Teams or Mattermost.
+
+**Built during the hackathon:**
+- the Switch template and both agents
+- the `gatehouse` CLI (queue, watch, verdict, verify, decide, rota, report, log, check-ledger), with 15 tests and CI
+- the docs
+
+Reused and disclosed: `shared/` (signature checks) and the public verdict API of PatchBond, my earlier MIT project.
