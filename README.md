@@ -35,7 +35,7 @@ Gatehouse turns the maintainers' existing channel into a **Switch room**, with t
 
 ### The two-key rule
 
-The AI judge proposes. A named person decides. **And the decision is refused unless the verdict's signature checks all pass at that moment.**
+The AI judge proposes. A named **maintainer** decides. **And the decision is refused unless the verdict's signature checks all pass at that moment.** A contributor arguing their own case in the help room can't record anything: `decide` refuses anyone who isn't on the maintainers list, and going on rota makes you a maintainer.
 
 `gatehouse decide` re-verifies before it writes anything, then appends to `data/ledger.jsonl`. Each entry's SHA-256 covers its content and the previous entry's hash, so editing or deleting any past decision breaks the chain at that line. Both of those are tested.
 
@@ -75,7 +75,7 @@ You need: macOS, Docker running, [Bun](https://bun.sh), and Claude Code or Codex
 1. **Clone and check the tools.** No key needed.
    ```bash
    git clone https://github.com/Gbangbolaoluwagbemiga/gatehouse && cd gatehouse && bun install
-   bun test                                     # → 15 pass (two-key rule, tampered ledger, watch, rota…)
+   bun test                                     # → 16 pass (two-key rule, non-maintainer refused, tampered ledger, watch, rota…)
    bun run gatehouse queue                      # → the live triage queue, with deadlines
    bun run gatehouse verify civicledger#61      # → ✓ 6/6 checks pass, with the signer
    ```
@@ -105,7 +105,8 @@ You need: macOS, Docker running, [Bun](https://bun.sh), and Claude Code or Codex
 | `watch [--peek]` | Only verdicts new since the last watch, plus open cases due within 24 h |
 | `verdict <ref>` / `verify <ref>` | Explain a verdict / re-run its six signature checks offline |
 | `decide <ref> <refund\|forfeit\|uphold> --by @x [--note …]` | Two-key: refuses on any ✗, an unnamed decider, or a second decision without an `override` note |
-| `rota [@x]` | Who's on rota, or hand over, keeping history |
+| `rota [@x]` | Who's on rota, or hand over, keeping history; the person going on rota becomes a maintainer |
+| `maintainers [add\|remove @x]` | Who may record decisions |
 | `report` / `log [n]` / `check-ledger` | The team's numbers / recent decisions / walk the hash chain |
 | `stats` / `digest` | The judge's numbers / everything together |
 

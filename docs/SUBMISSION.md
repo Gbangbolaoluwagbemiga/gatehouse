@@ -25,7 +25,7 @@ Gatehouse turns the maintainers' Telegram group into a Switch room. One template
   - independently re-runs six signature checks on every verdict, in the same thread, and flags a changed signing key
   - after each decision, re-walks the ledger's hash chain
   - keeps an Audit Log room document
-- **The two-key rule:** the AI proposes, a named person decides, and `gatehouse decide` refuses unless every signature check passes at that moment. Decisions go into a hash-chained ledger, so editing or dropping any past entry is detected (tested). The agents hold no keys: the bond moves only when the maintainer signs.
+- **The two-key rule:** the AI proposes, a named maintainer decides (a contributor can't record a decision on their own PR), and `gatehouse decide` refuses unless every signature check passes at that moment. Decisions go into a hash-chained ledger, so editing or dropping any past entry is detected (tested). The agents hold no keys: the bond moves only when the maintainer signs.
 
 Switch is the workflow itself. It provides:
 - the rooms on Telegram
@@ -40,7 +40,7 @@ The same setup runs on Slack, Teams or Mattermost.
 
 **Built during the hackathon:**
 - the Switch template and both agents
-- the `gatehouse` CLI (queue, watch, verdict, verify, decide, rota, report, log, check-ledger), with 15 tests and CI
+- the `gatehouse` CLI (queue, watch, verdict, verify, decide, rota, report, log, check-ledger), with 16 tests and CI
 - the docs
 
 Reused and disclosed: `shared/` (signature checks) and the public verdict API of PatchBond, my earlier MIT project.

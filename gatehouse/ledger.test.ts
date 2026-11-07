@@ -13,6 +13,7 @@ const all = verdicts as unknown as VerdictRecord[];
 let store: Store;
 beforeEach(() => {
   store = new Store(mkdtempSync(join(tmpdir(), "gatehouse-")));
+  for (const m of ["@ada", "@bo", "@cy"]) store.setMaintainer(m);
 });
 
 describe("decide: the two-key rule", () => {
@@ -27,6 +28,15 @@ describe("decide: the two-key rule", () => {
     const forged = { ...good, response_body: good.response_body.replace("forfeit", "refund") } as VerdictRecord;
     for (const v of [tampered, forged]) await expect(decide(store, v, "refund", "@ada")).rejects.toThrow("refused");
     expect(store.entries()).toHaveLength(0);
+  });
+
+  test("refuses a decision from someone who isn't a maintainer, e.g. the PR's own author in the help room", async () => {
+    await expect(decide(store, good, "refund", "@the-contributor", "I think it's wrong")).rejects.toThrow("not a maintainer");
+    store.setRota("@dee");
+    expect(store.maintainers()).toContain("@dee");
+    expect(await decide(store, good, "refund", "@dee")).toMatchObject({ by: "@dee", on_rota: true });
+    store.setMaintainer("@dee", false);
+    await expect(decide(store, good, "forfeit", "@dee", "override")).rejects.toThrow("not a maintainer");
   });
 
   test("refuses an unknown decision, an unnamed decider, and a second decision without an override", async () => {

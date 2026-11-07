@@ -4,6 +4,7 @@
 import { createHash } from "node:crypto";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { verifyRecord } from "../shared/verify";
 import type { VerdictRecord } from "../shared/types";
 
@@ -39,7 +40,7 @@ const body = ({ hash: _h, ...rest }: Entry) => JSON.stringify(rest);
 
 /** Everything Gatehouse remembers lives in one folder: GATEHOUSE_DATA, or `data/` at the repo root. */
 export class Store {
-  constructor(readonly dir = process.env.GATEHOUSE_DATA ?? join(dirname(new URL(import.meta.url).pathname), "..", "data")) {
+  constructor(readonly dir = process.env.GATEHOUSE_DATA ?? join(dirname(fileURLToPath(import.meta.url)), "..", "data")) {
     mkdirSync(dir, { recursive: true });
   }
   private path = (f: string) => join(this.dir, f);
@@ -62,8 +63,18 @@ export class Store {
     return entry;
   }
 
+  maintainers = () => this.read<string[]>("maintainers.json", []);
+  setMaintainer(who: string, on = true) {
+    const set = new Set(this.maintainers());
+    if (on) set.add(handle(who));
+    else set.delete(handle(who));
+    this.write("maintainers.json", [...set].sort());
+  }
+
   rota = () => this.read<Rota>("rota.json", { current: null, since: null, history: [] });
+  /** Whoever goes on rota is a maintainer from then on. */
   setRota(who: string, now = new Date()) {
+    this.setMaintainer(who);
     const r = this.rota();
     if (r.current && r.since) r.history.push({ who: r.current, from: r.since, to: now.toISOString() });
     this.write("rota.json", { current: handle(who), since: now.toISOString(), history: r.history.slice(-50) });
@@ -90,11 +101,15 @@ export const decisionFor = (entries: Entry[], verdictId: string) => entries.filt
 
 /**
  * Records a maintainer's decision, two-key style: the AI judge proposed, the signature checks must
- * pass now, and a named person decides. Refuses on any failed check, an unknown decision or no name.
+ * pass now, and a named maintainer decides. Refuses on any failed check, an unknown decision, no name,
+ * or a name that isn't on the maintainers list.
  */
 export async function decide(store: Store, v: VerdictRecord, decision: string, by: string, note = "", now = new Date()) {
   if (!DECISIONS.includes(decision as Decision)) throw new Error(`decision must be one of ${DECISIONS.join(", ")}`);
   if (!by.trim()) throw new Error("say who decided: --by @handle");
+  if (!store.maintainers().includes(handle(by))) {
+    throw new Error(`refused: ${handle(by)} is not a maintainer. Only maintainers decide; a contributor's objection goes to the maintainers' room as a dispute.`);
+  }
   const checks = await verifyRecord(v);
   const bad = checks.filter((c) => !c.ok);
   if (bad.length) throw new Error(`refused: the verdict fails "${bad[0].name}", so it can't be acted on. Ask @gatehouse-auditor.`);

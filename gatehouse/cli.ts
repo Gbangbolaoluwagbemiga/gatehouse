@@ -10,7 +10,8 @@ const USAGE = `usage: bun gatehouse/cli.ts <command>
   watch [--peek]                new verdicts since the last watch, and cases due within 24 h
   decide <id|repo#n> <refund|forfeit|uphold> --by @handle [--note "..."]
                                 record a maintainer's decision (refused unless every check passes)
-  rota [@handle]                who is on rota; with a handle, hand over
+  rota [@handle]                who is on rota; with a handle, hand over (that person becomes a maintainer)
+  maintainers [add|remove @handle]  who may record decisions
   report                        decisions, time to decision, cases left to time out, ledger integrity
   log [n]                       the last n ledger entries
   stats | digest`;
@@ -46,6 +47,12 @@ const run: Record<string, () => Promise<string> | string> = {
     }
     const r = s.rota();
     return r.current ? `On rota: ${r.current} since ${r.since!.slice(0, 16).replace("T", " ")} UTC.` : "Nobody is on rota. Set one: rota @handle";
+  },
+  maintainers: () => {
+    const s = store();
+    if (a === "add" || a === "remove") s.setMaintainer(need(b, "@handle"), a === "add");
+    const m = s.maintainers();
+    return m.length ? `Maintainers who may record decisions: ${m.join(", ")}.` : "No maintainers yet. Going on rota makes you one, or: maintainers add @handle";
   },
   report: () => report(api, store()),
   log: () => log(store(), Number(a ?? 5)),

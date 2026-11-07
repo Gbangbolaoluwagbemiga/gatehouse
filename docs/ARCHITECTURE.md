@@ -29,6 +29,7 @@
 |---|---|
 | No decision on a verdict whose signature doesn't check out | **Code:** `decide()` re-verifies and throws before writing (`gatehouse/ledger.ts`, tested) |
 | Every decision names a person | **Code:** `--by` is required |
+| Only maintainers decide (not the PR's author arguing in the help room) | **Code:** `decide` refuses a `--by` not on `maintainers.json`, tested. **Brief:** the desk never runs `decide` in the help room |
 | No silent change of a decision | **Code:** a second decision needs an `override` note, and both stay in the log |
 | Past decisions can't be quietly edited or dropped | **Code:** hash chain, `check-ledger`, tested with an edited line and a dropped line |
 | Agents never move money | **Design:** the CLI has no keys and no signing; the maintainer signs on the verdict page |
@@ -44,4 +45,5 @@
 |---|---|
 | `ledger.jsonl` | One JSON object per decision: `seq`, `at`, `verdict_id`, `pr`, `judge_verdict`, `decision`, `by`, `note`, `on_rota`, `checks`, `verdict_hash`, `prev`, `hash`. `hash = sha256(entry without hash)` |
 | `rota.json` | `{current, since, history[]}` |
+| `maintainers.json` | Handles allowed to record decisions; going on rota adds you |
 | `seen.json` | Verdict ids already shown by `watch` |
